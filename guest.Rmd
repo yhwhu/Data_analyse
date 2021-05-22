@@ -236,8 +236,6 @@ layout <- matrix(c(1,1,1,1,2,3,4,4),2,4,byrow=TRUE)
 multiplot(p1, p2, p3, p4, layout=layout)
 ```
 
-We find:
-
 - There is an interesting long-term step structure in the overall time series. This might be related to new restaurants being added to the data base. 
 
 - The number of guests per visit per restaurant per day peaks at around 20 (the orange line).
@@ -285,8 +283,6 @@ layout <- matrix(c(1,1,2,3),2,2,byrow=TRUE)
 multiplot(p1, p2, p3, layout=layout)
 ```
 
-We find:
-
 - There were much fewer reservations made in 2016 through the *air* system; The volume only increased during the end of that year. In 2017 the visitor numbers stayed strong. 
 
 - Reservations are made typically for the dinner *hours* in the evening.
@@ -330,8 +326,6 @@ p3 <- foo %>%
 layout <- matrix(c(1,1,2,3),2,2,byrow=TRUE)
 multiplot(p1, p2, p3, layout=layout)
 ```
-
-We find:
 
 - Here the visits after reservation follow a more orderly pattern, with a clear spike in Dec 2016. 
 
@@ -409,7 +403,6 @@ p1
 
 # Feature relations
 ## Visitors per genre
-Our first plot of the multi-feature space deals with the average number of *air* restaurant *visitors* broken down by type of cuisine; i.e. the *air\_genre\_name*. We use a facet plot to distinguish the time series for the 14 categories. Note the logarithmic y-axis:
 
 ```{r split=FALSE, fig.align = 'default', warning = FALSE, fig.cap ="Fig. 11", out.width="100%"}
 foo <- air_visits %>%
@@ -427,15 +420,10 @@ foo %>%
   facet_wrap(~ air_genre_name)
 ```
 
-We find:
-
 - The mean values range between 10 and 100 visitors per genre per day. Within each category, the long-term trend looks reasonably stable. There is an upward trend for "Creative Cuisine" and "Okonomiyaki" et al., while the popularity of "Asian" food has been declining since late 2016. 
 
-- The low-count time series like "Karaoke" or "Asian" (see Fig. 6) are understandably more noisy than the genres with higher numbers of visitors. Still, "Asian" restaurants appear to be very popular despite (or because of?) their rarity.
+- The low-count time series like "Karaoke" or "Asian" are understandably more noisy than the genres with higher numbers of visitors. Still, "Asian" restaurants appear to be very popular despite (or because of?) their rarity.
 
-
-
-In all of the curves we see the familiar weekly variation, so let's look in more detail at the mean visitor numbers per week day and genre. We also add to this a series of *ridgeline plots* via the [ggridges](https://cran.r-project.org/web/packages/ggridges/) package. Ridgeline plots allow for a quick comparison of semi-overlapping (density) curves. Here we show the distribution of visitors per day for each *genre*. Through a little bit of ggplot magic, the y-axis labels in between those two plots refer to both of them:
 
 ```{r split=FALSE, fig.align = 'default', warning = FALSE, fig.cap ="Fig. 12", out.width="100%"}
 p1 <- foo %>%
@@ -465,10 +453,6 @@ multiplot(p1, p2, layout=layout)
 p1 <- 1; p2 <- 1; p3 <- 1; p4 <- 1; p5 <- 1
 ```
 
-Here each colour corresponds to a day of the week. Red-ish coulours are the weekend, while the cooler colours are the middle of the week. Monday is a dark orange.
-
-We find:
-
 - The biggest difference between weekend and weekdays exists for the "Karaoke" bars, which rule the weekend. A similar trend, although with a considerably smaller gap, can be seen for the "International" cuisine.
 
 - No *genre* really goes against the trend of busier weekends. The smallest variations are in the generic "Other" category, the "Japanese" food, and also the "Korean" cuisine which is the only category where Fridays are the busiest days. General "Bars/Cocktail" are notably unpopular overall.
@@ -478,8 +462,6 @@ We find:
 
 
 ## The impact of holidays
-
-We will study the influence of holidays on our visitor numbers by comparing the statistics for days with holidays vs those without holiday flag:
 
 ```{r split=FALSE, fig.align = 'default', warning = FALSE, fig.cap ="Fig. 13", fig.height=3.5, out.width="100%"}
 foo <- air_visits %>%
@@ -505,7 +487,6 @@ layout <- matrix(c(1,2),1,2,byrow=TRUE)
 multiplot(p1, p2, layout=layout)
 ```
 
-We find:
 
 - Overall, holidays don't have any impact on the average visitor numbers (left panel). As so often, more information is hidden in the details.
 
@@ -513,10 +494,6 @@ We find:
 
 
 ## Reservations vs Visits
-
-Next we will turn our attention to the *reservation* numbers in the `air_reserve` and `hpg_reserve` data sets. We have seen their time series and distributions back in Sections 4.2 and 4.3; now we will compare the reservation numbers to the actual visitor numbers.
-
-For this, we compute the sum of *reserve\_visitors* per day (i.e. the number of people reservations were made for) for each restaurant *id* and then join these summaries to the *air\_visitors* file. In order to include the *hpg* reservations we need to use the *store\_ids* data to join the *hpg\_store\_ids* from the *hpg\_reserve* file to the corresponding *air\_store\_ids*:
 
 ```{r}
 foo <- air_reserve %>%
@@ -536,7 +513,6 @@ all_reserve <- air_visits %>%
   mutate(reserve_visitors = reserve_visitors_air + reserve_visitors_hpg)
 ```
 
-Now we will plot the total *reserve\_visitor* numbers against the actual *visitor* numbers for the *air* restaurants. We use a scatter plot to which we are adding marginal histograms via the `ggMarginal` function of the `ggExtra` [package](https://cran.r-project.org/web/packages/ggExtra/). The grey line shows `reserve_visitors == visitors` and the blue line is a linear fit:
 
 ```{r split=FALSE, fig.align = 'default', warning = FALSE, fig.cap ="Fig. 19", out.width="100%"}
 p <- all_reserve %>%
@@ -548,7 +524,6 @@ p <- all_reserve %>%
 ggMarginal(p, type="histogram", fill = "blue", bins=50)
 ```
 
-We find:
 
 - The histograms show that the *reserve\_visitors* and *visitors* numbers peak below ~20 and are largely confined to the range below 100.
 
@@ -559,9 +534,6 @@ We find:
 - The linear fit suggests a trend in which larger numbers of *reserve\_visitors* are more likely to underestimate the eventual *visitor* numbers. This is not surprising either, since I can imagine that it is more likely that (a) a large reservation is cancelled than (b) a large group of people walk in a restaurant without reservation.
 
 
-
-Finally, let's have a quick look at the impact of holidays on the discrepancy between *reservations* and *visitors*. We'll be using overlapping density plots:
-
 ```{r split=FALSE, fig.align = 'default', warning = FALSE, fig.cap ="Fig. 21", fig.height=3, out.width="100%"}
 all_reserve %>%
   mutate(date = visit_date) %>%
@@ -570,7 +542,6 @@ all_reserve %>%
   geom_density(alpha = 0.5)
 ```
 
-We find:
 
 - There are somewhat higher numbers of *visitors* compared to *reservations* on a holiday. The peaks are almost identical, but we see small yet clear differences towards larger numbers.
 
@@ -581,37 +552,13 @@ We find:
 
 
 # Forecasting methods
-
-Finally, we will turn our focus to time-series forecasting methods. We have already learnt a lot about our data set and it's features. The following sections will introduce basic forecasting methods. This chapter sets out by borrowing heavily from the explanations and methods outlined in my [WikiTrafficForecast kernel](https://www.kaggle.com/headsortails/wiki-traffic-forecast-exploration-wtf-eda).
-
-
-
-
-
-
-
 ## ARIMA / auto.arima
 
-A popular method for forecasting is the *autoregressive integrated moving average* model; short [ARIMA](https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average) model. This kind of model consists of three building blocks which parametrised by the three indeces *p, d, q* as ARIMA(p, d, q):
-
-- **auto-regressive / p:** we are using past data to compute a regression model for future data. The parameter *p* indicates the range of *lags*; e.g. ARIMA(3,0,0) includes *t-1*, *t-2*, and *t-3* values in the regression to compute the value at *t*.
-
-- **integrated / d:** this is a *differencing* parameter, which gives us the number of times we are subtracting the current and the previous values of a time series. Differencing removes the change in a time series in that it stabilises the mean and removes (seasonal) trends. This is necessary since computing the lags (e.g. difference between time *t* and time *t-1*) is most meaningful if large-scale trends are removed. A time series where the variance (or amount of variability) (and the autocovariance) are time-invariant (i.e. don't change from day to day) is called *stationary*.
-
-- **moving average / q:** this parameter gives us the number of previous error terms to include in the regression error of the model.
-
-
-Here we will be using the `auto.arima` tool which estimates the necessary ARIMA parameters for each individual time series. In order to feed our data to `auto.arima` we need to turn them into a time-series object using the `ts` tool. We will also add a step for cleaning and outlier removal via the `tsclean` function of the [*forecast* package](https://cran.r-project.org/web/packages/forecast/index.html). We have already seen that our data contain a strong weekly cycle, which will be one of the pre-set parameters of our model. We will include this knowledge when transforming our data. Let's set everything up step by step, with comments and explanations, and then turn it into a function. Unhide the code to see how it is implemented.
-
- 
-We use the first *air\_store\_id* ("air_ba937bf13d40fb24") as an example.
 
 ```{r}
 air_id = "air_ba937bf13d40fb24"
 ```
 
-
-In order to test our prediction, we will forecast for an identical time frame as we are ultimately tasked to predict (Apr 23th - May 31st). Here we automatically extract these 39 days from the length of the *test* prediction range and define it as our "prediction length".
 
 ```{r}
 pred_len <- test %>%
@@ -620,17 +567,12 @@ pred_len <- test %>%
   nrow()
 ```
 
-
-We choose to predict for the last 39 days of our *training* sample. This might not be  Here we compute the upper end of our *training* dates and subtract our "prediction length" from this value to define the start of our validation sample on Mar 14th. We also create a data set of all *visit\_dates* in preparation for many time series having gaps.
-
 ```{r}  
 max_date <- max(air_visits$visit_date)
 split_date <- max_date - pred_len
 all_visits <- tibble(visit_date = seq(min(air_visits$visit_date), max(air_visits$visit_date), 1))
 ```
 
-
-Next, we extract the time series for the specific *air\_store\_id*. We transform the *visitors* counts by `log1p` and join the data set of all *visit\_dates*. This gives us a number of `NA` which we fill in with the overall median. The median might not be the best choice here, but it's a sensible starting point. Most time series prediction tools require a sequential time series without gaps; which is what we create in this step.
 
 ```{r}
 foo <- air_visits %>%
@@ -644,30 +586,21 @@ visits <- foo %>%
 ```
   
 
-Using this new time series, we now split the data into *training* and *validation* sets.
-  
 ```{r}
 visits_train <- visits %>% filter(visit_date <= split_date)
 visits_valid <- visits %>% filter(visit_date > split_date)
 ```
 
 
-Now comes the fitting part. As said before, we use the `ts` function to create a time series object and the `tsclean` tool to remove outliers. We also add the weekly frequency. The `stepwise` and `approximation` parameter settings mean that the tool performs a more thorough and precise search over all model parameters. This increases the computing time, but for our small data set this doesn't matter much.
-
 ```{r}
 arima.fit <- auto.arima(tsclean(ts(visits_train$visitors, frequency = 7)),
                         stepwise = FALSE, approximation = FALSE)
 ```
 
-
-Using the fitted ARIMA model we will `forecast` for our "prediction length". We include confidence intervals.
-
 ```{r}
 arima_visits <- arima.fit %>% forecast(h = pred_len, level = c(50,95))
 ```
 
-
-Finally, we plot our prediction. The `autoplot` function of the `ggplot2` package creates plots according to the properties of a particular data type; here a time series object. The predicted *visitor* counts are shown in dark blue, with the lighter blues indicating the confidence ranges. We also add the real validation counts in grey:
 
 ```{r split=FALSE, fig.align = 'default', warning = FALSE, fig.cap ="Fig. 31", out.width="100%"}
 arima_visits %>%
@@ -677,9 +610,6 @@ arima_visits %>%
 ```
 
 We find that the first days of the forecast fit quite well, but then our prediction is not able to capture the larger spikes. Still, it's a useful starting point to compare other methods to.
-
-
-Now we turn this procedure into a function, including the plotting part.
 
 
 ```{r}
@@ -718,9 +648,6 @@ plot_auto_arima_air_id <- function(air_id){
 }
 ```
 
-
-And we apply this function to a few time series', including two of the *slope* outliers from the previous section:
-
 ```{r fig.align = 'default', warning = FALSE, fig.cap ="Fig. 31", out.width="100%"}
 p1 <- plot_auto_arima_air_id("air_f3f9824b7d70c3cf")
 p2 <- plot_auto_arima_air_id("air_8e4360a64dbd4c50")
@@ -731,33 +658,11 @@ layout <- matrix(c(1,2,3,4),2,2,byrow=TRUE)
 multiplot(p1, p2, p3, p4, layout=layout)
 ```
 
-We find:
-
 - The two time series' in the upper panels are reasonable complete, but we see that the long gaps (and our median filling) lead to problems in the predictions in the upper left panel where we loose the weekly periodicity. The upper right panel retains this periodicity and the predictions for the first days are relatively decent, but then we quickly under-predict the amplitude of the variations.
 
 - The lower panels include two of the outliers from our time-series parameter space above; and here we see cases where things go really wrong. These kind of peculiar time series could lead to a bad performance for any otherwise decent forecasting algorithm if they contain a large enough fraction of visits in the test data set.
 
-
-Overall, the results are not great, but given that it's a fully automatic forecast (assuming only weekly periodicities) the `auto.arima` tool gives us a first baseline to compare other methods to.
-
-
-For a more detailed exploration of ARIMA models take a look at [this Kernel](https://www.kaggle.com/timolee/feeling-hungry-a-beginner-s-guide-to-arima-models) by [TimLee](https://www.kaggle.com/timolee).
-
-
 ## Prophet
-
-The [prophet](https://facebookincubator.github.io/prophet/) forecasting tool is an open-source software developed by [Facebook](https://research.fb.com/prophet-forecasting-at-scale/). It is available for both *R* and Python.
-
-Prophet utilises an additive regression model which decomposes a time series into (i) a (piecewise) linear/logistic trend, (ii) a yearly seasonal component, (iii) a weekly seasonal component, and (iv) an optional list of important days (such as holidays, special events, ...). It claims to be "robust to missing data, shifts in the trend, and large outliers". Especially the missing data functionality could be useful in this competition.
-
-Let's again explore the tool step by step. We will build on our work in the ARIMA section and won't repeat any explanations that can be found there.
-
-We will again create a *training* and *validation* set for the same periods as above (i.e before/after Mar 14th). The only differences to our ARIMA approach are that: 
-
-- We don't need to replace `NA` values because prophet knows how to handle those.
-
-- Prophet expects a data frame with two columns: *ds* for the dates and *y* for the time series variable.
-
 
 ```{r message=FALSE, error=FALSE}
 air_id = "air_ba937bf13d40fb24"
@@ -786,13 +691,6 @@ visits_valid <- visits %>% filter(ds > split_date)
 ```
 
 
-Here we fit the prophet model and make the forecast:
-
-- the parameter *changepoint.prior.scale* adjusts the trend flexibility. Increasing this parameter makes the fit more flexible, but also increases the forecast uncertainties and makes it more likely to overfit to noise. The changepoints in the data are automatically detected unless being specified by hand using the *changepoints* argument (which we don't do here).
-
-- the parameter *yearly.seasonality* has to be enabled/disabled explicitely and allows prophet to notice large-scale cycles. We have barely a year of data here, which is definitely insufficient to find yearly cycles and probably not enough to identify variations on the time scales of months. Feel free to test the performance of this parameter. 
-
-
 ```{r}
 proph <- prophet(visits_train, changepoint.prior.scale=0.5, yearly.seasonality=FALSE, daily.seasonality = FALSE)
 future <- make_future_dataframe(proph, periods = pred_len)
@@ -800,46 +698,15 @@ fcast <- predict(proph, future)
 ```
 
 
-This is the standard prophet forecast plot:
-
 ```{r fig.align = 'default', warning = FALSE, fig.cap ="Fig. 32", out.width="100%"}
 plot(proph, fcast)
 ```
-
-The observed data are plotted as black points and the fitted model, plus forecast, as a blue line. In light blue we see the corresponding uncertainties.
-
-Prophet offers a decomposition plot, where we can inspect the additive components of the model: trend, yearly seasonality (if included), and weekly cycles:
 
 ```{r fig.align = 'default', warning = FALSE, fig.cap ="Fig. 33", out.width="100%"}
 prophet_plot_components(proph, fcast)
 ```
 
-We find:
-
-- Prophet detects a weekly variation pattern which is similar to what we had found before, in that Fri/Sat are more popular than the rest of the week. The difference, however, is that here Sun has a very low average *visitor* count. This might be be due to the properties of this particular restaurant, a "Dining Bar" in "Tokyo". In Fig. 23 we see that "Dining Bars" in general are not as busy on Sundays; although not to such a large extent as we see in this graph. The difference in *visitors* on Sat vs Sun might be an interesting feature of an eventual model.
-
-- The long-term trend is different from the average behaviours displayed in Fig. 11, which were more likely to rise toward the end of 2016. Here we see a peak in mid 2016. (Thanks to [GAVOILLEGuillaume](https://www.kaggle.com/guillaumegavoille) in the comments for spotting my earlier mistakes in this description!)
-
-- Note, that this is one specific time series. I've checked other time series as well and many of them showed the expected Fri/Sat/Sun vs Mon-Thu variations along with a long-term peak around Dec 2017. Feel free to fork this Kernel and check for yourself.
-
-
-So: This is a good start, but we will of course use our trusted `ggplot2` to give us more control over the plotting parameters:
-
-```{r fig.align = 'default', warning = FALSE, fig.cap ="Fig. 34", out.width="100%"}
-fcast %>%
-  as.tibble() %>%
-  mutate(ds = date(ds)) %>%
-  ggplot(aes(ds, yhat)) + 
-  geom_ribbon(aes(x = ds, ymin = yhat_lower, ymax = yhat_upper), fill = "light blue") +
-  geom_line(colour = "blue") +
-  geom_line(data = visits_train, aes(ds, y), colour = "black") +
-  geom_line(data = visits_valid, aes(ds, y), colour = "grey50")
-```
-
-That doesn't look too bad. We plot our training visitor counts in black, the validation set in grey, and the forecast plus uncertainties in blue and light blue, again.
-
-Let's turn this into another function:
-
+- Prophet detects a weekly variation pattern which is similar to what we had found before, in that Fri/Sat are more popular than the rest of the week. 
 ```{r}
 plot_prophet_air_id <- function(air_id){
   
@@ -885,8 +752,6 @@ plot_prophet_air_id <- function(air_id){
 ```
 
 
-And then we forecast and plot the same time series as above (except for "air_900d755ebd2f7bbd", which didn't have enough data points for prophet and had to be replaced by "air_820d1919cbecaa0a"):
-
 ```{r results="hide", fig.align = 'default', warning = FALSE, fig.cap ="Fig. 35", out.width="100%"}
 p1 <- plot_prophet_air_id("air_f3f9824b7d70c3cf")
 p2 <- plot_prophet_air_id("air_8e4360a64dbd4c50")
@@ -897,12 +762,7 @@ layout <- matrix(c(1,2,3,4),2,2,byrow=TRUE)
 multiplot(p1, p2, p3, p4, layout=layout)
 ```
 
-That looks not bad either. Looks like we're overestimating the trend component, which could probably use less flexibility, for at least three of these. The forth time series has too little data for prophet to be able to do much. Here we could discard the trend component completely or simply take the median.
-
-
-Remember that prophet also gives us the possibility to include *holidays* and other special events in our forecast. For our task, this could be very useful in taking the Golden Week into account. For more insights from a tailored analysis of the Golden Week's impact have a look at [this kernel](https://www.kaggle.com/breakfastpirate/weeks-before-after-golden-week-2016) by [BreakfastPirate](https://www.kaggle.com/breakfastpirate) and the associated [discussion](https://www.kaggle.com/c/recruit-restaurant-visitor-forecasting/discussion/45048) [topics](https://www.kaggle.com/c/recruit-restaurant-visitor-forecasting/discussion/45120).
-
-Since the holiday data is readily available in this competition we only need to rename it according to prophet's liking to include it in our forecast function. Let's modify that function see whether holidays make a difference when predicting for the 2016 Golden Week. The only thing we need to do is to truncate our *air\_visits* data on May 31 2016 in an intermediate step:
+Looks like we're overestimating the trend component, which could probably use less flexibility, for at least three of these. The forth time series has too little data for prophet to be able to do much.
 
 ```{r}
 plot_prophet_air_id_holiday <- function(air_id, use_hday){
@@ -970,8 +830,6 @@ plot_prophet_air_id_holiday <- function(air_id, use_hday){
 ```
 
 
-And then we take a well behaved time series and compare the predictions with and without holidays:
-
 ```{r results="hide", fig.align = 'default', warning = FALSE, fig.cap ="Fig. 36", out.width="100%"}
 p1 <- plot_prophet_air_id_holiday("air_5c817ef28f236bdf", TRUE)
 p2 <- plot_prophet_air_id_holiday("air_5c817ef28f236bdf", FALSE)
@@ -980,9 +838,7 @@ layout <- matrix(c(1,2),2,1,byrow=TRUE)
 multiplot(p1, p2, layout=layout)
 ```
 
-We find:
-
-- There is a subtle improvement in fitting the Golden Week *visitors* when including holidays. The performance of this component might improve if there are more holidays included in the *training* set; but I think it's difficult to validate this.
+- There is a subtle improvement in fitting the Golden Week *visitors* when including holidays. The performance of this component might improve if there are more holidays included in the *training* set.
 
 
 
